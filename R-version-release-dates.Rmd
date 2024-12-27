@@ -1,0 +1,155 @@
+
+# Analysis of R version release dates
+
+```{r setup}
+library(here)
+library(dplyr)
+library(ggplot2)
+library(fpp3)
+library(ggrepel)
+
+source(here("src", "get_latest_r_versions_data.R"))
+release_dates <- readRDS(here("data", paste0(Sys.Date(), "_rversions.RDS")))
+```
+
+The `release_dates` data is sourced from the {rversions} package. 
+Run the `get_latest_r_versions_data.R` script in *src/* to get the latest data. 
+
+```{r}
+release_dates
+```
+Which versions have had the most patch_updates?
+
+```{r}
+release_dates %>% 
+  filter(date > as.Date("2000-02-07")) %>% 
+  distinct(minor_version, patch_updates) %>% 
+  arrange(desc(patch_updates)) %>% 
+  slice(1:5)
+```
+
+# Can we guess how many more patch_updates the latest R version will have? 
+
+At the initial time of writing this, R 4.3 only had one update. 
+Upon returning to this, R 4.4.0 was just released. 
+
+We'll build a `tsibble` to take a look at patch_updates by initial release date for each minor R version.
+
+```{r}
+major_release_ts <- 
+  release_dates %>% 
+  mutate(
+    initial_release_week = yearweek(major_release_start),
+    month = yearmonth(major_release_start),
+    dev_end_week = yearweek(major_release_end)
+  ) %>% 
+  distinct(initial_release_week, major_version, minor_releases, dev_end_week) %>% 
+  as_tsibble(index = initial_release_week)
+
+minor_release_ts <- 
+  release_dates %>% 
+  mutate(
+    initial_release_week = yearweek(minor_release_start),
+    month = yearmonth(minor_release_start),
+    dev_end_week = yearweek(minor_release_end)
+  ) %>% 
+  distinct(initial_release_week, minor_version, patch_updates, dev_end_week) %>% 
+  as_tsibble(index = initial_release_week)
+```
+
+And on to the graph... 
+
+Major R releases
+
+```{r}
+autoplot(major_release_ts, minor_releases) + 
+  geom_point() + 
+  geom_label_repel(aes(label = major_version, vjust = 0.6), direction = "y", segment.color = "blue") + 
+  labs(x = NULL, y = "# of minor releases", caption = "Label positions indicate initial release date for major R version") + 
+  ggtitle("How many minor releases should be expected for the latest major version of R?") + 
+  scale_x_yearmonth(date_breaks = "2 years", date_label = "%Y") + 
+  scale_y_continuous(limits = c(0, 15), expand = c(0.02, 0), breaks = seq(0, 15, by = 2)) + 
+  theme(
+    panel.grid.major.x = element_line(color = "grey80", linetype = 2)
+  )
+```
+```{r}
+ggsave(
+  here("publish", paste0(Sys.Date(), "_r_major_version_ts.png")),
+  width = 15,
+  height = 6
+  )
+```
+
+
+Minor releases.. 
+
+```{r fig.height=7, fig.width=12}
+autoplot(minor_release_ts, patch_updates) + 
+  geom_point() + 
+  geom_label_repel(aes(label = minor_version, vjust = 0.6), direction = "y", segment.color = "blue") + 
+  labs(x = NULL, y = "# of patch updates", caption = "Label positions indicate initial release date for minor R version") + 
+  ggtitle("How many R 4.4 patch updates should be expected this year?") + 
+  scale_x_yearmonth(date_breaks = "1 year", date_label = "%Y") + 
+  scale_y_continuous(limits = c(0, 5.25), expand = c(0.01, 0)) + 
+  theme(
+    panel.grid.major.x = element_line(color = "grey80", linetype = 2)
+  )
+```
+
+```{r}
+ggsave(
+  here("publish", paste0(Sys.Date(), "_r_minor_version_ts.png")),
+  width = 15,
+  height = 6
+  )
+```
+
+# What months have typically had the most patch_updates? 
+
+We can look at the total number of patch_updates that have occurred in each month. 
+We're currently in August 2023, so this might suggest when we can expect patch_updates to occur for the latest R version. 
+
+```{r}
+release_dates %>% 
+  mutate(
+    month = yearmonth(date),
+    mo = lubridate::month(date, label = TRUE),
+    yr = lubridate::year(date) %>% as.factor()
+  ) %>% 
+  group_by(mo) %>% 
+  mutate(patch_updates = n()-1) %>% 
+  distinct(mo, patch_updates) %>% 
+  ggplot(aes(x = mo, y = patch_updates)) +
+  geom_col() + 
+  theme_classic() + 
+  scale_y_continuous(expand = c(0,0)) + 
+  labs(x = NULL, y = "total # of R releases", title = "End of year patch_updates are more likely to happen in October and December")
+```
+
+```{r}
+ggsave(
+  here("publish", paste0(Sys.Date(), "_minor_release_months.png")),
+  width = 7,
+  height = 5
+  )
+```
+
+
+# What months have new R versions been initially released in?  
+
+```{r}
+minor_release_ts %>% 
+  mutate(month = month(initial_release_week, label = TRUE)) %>% 
+  count(month, sort = TRUE)
+```
+
+Interesting, so no new R versions have ever been released in January or July!
+
+
+
+
+
+
+
+
