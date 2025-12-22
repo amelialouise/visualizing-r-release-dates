@@ -10,3 +10,4 @@ Depends on the [{fable}](https://fable.tidyverts.org/) package which requires a 
 install.packages('macrtools')
 macrtools::gfortran_install()
 ```
+
