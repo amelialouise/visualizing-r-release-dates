@@ -2,14 +2,13 @@ library(rversions)
 
 rversions <-
   r_versions() %>% 
+  filter(version >= "1.4.1") %>% 
   mutate(
     date = as.Date(date),
-    major_version = 
-      paste("R", stringr::str_extract(version, "(0\\.[1-9])|(\\d*)")) %>% 
-      if_else(stringr::str_detect(., "\\."), ., paste0(., ".0")),
-    minor_version = paste("R", stringr::str_extract(version, "(\\d*\\.{1}\\d*)"))
+    major_version = paste0("R ", stringr::str_extract(version, "(^\\d)"), ".0"),
+    minor_version = paste0("R ", stringr::str_extract(version, "(\\d\\.{1}\\d)"))
   ) %>% 
-  select(major_version, minor_version, version, date) %>% 
+  select(major_version, minor_version, date) %>% 
   group_by(minor_version) %>% 
   mutate(
     minor_release_start = first(date),
@@ -25,6 +24,8 @@ rversions <-
     major_release_year = first(date) %>% lubridate::year(),
     major_release_end = last(date)
   ) %>% 
-  ungroup()
+  ungroup() %>% 
+  select(-date) %>% 
+  distinct()
 
 saveRDS(rversions, here("data", paste0(Sys.Date(), "_rversions.RDS")))
