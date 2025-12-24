@@ -3,13 +3,13 @@ title: 'Analysis of R version release dates'
 output: 'github_document'
 ---
 
-We'll use the `r_versions()` function from {rversions} to get past and present versions in a dataframe. 
+We'll use the `r_versions()` function from {rversions} to get past and present versions in a dataframe.
 
 Since R 1.4.1, version numbers consist of three numbers: major, minor and patch.
 
-So we'll start with R 1.4.1. 
+So we'll start with R 1.4.1.
 
-The `get_latest_r_versions_data.R` script in */src* will format names and add date variables used for plots. 
+The `get_latest_r_versions_data.R` script in */src* will format names and add date variables used for plots.
 
 ```{r setup, echo=TRUE, results="hide", message = FALSE}
 library(here)
@@ -19,18 +19,19 @@ library(rversions)
 library(tsibble)
 library(ggrepel)
 
-# custom script to createand save tidy data in local sesh
+# custom script to create and save tidy data in local sesh
 source(here("src", "get_latest_r_versions_data.R"))
 
 # load tidy data
 release_dates <- readRDS(here("data", paste0(Sys.Date(), "_rversions.RDS")))
 ```
 
-Take a... 
+Take a...
 
 ```{r}
 glimpse(release_dates)
 ```
+
 Which versions have had the most patch updates?
 
 ```{r}
@@ -40,12 +41,11 @@ release_dates %>%
   slice(1:5)
 ```
 
-# Can we guess how many more patch_updates the latest R version will have? 
+# Can we guess how many more patch updates the latest R version will have?
 
-At the initial time of writing this, R 4.5 had `r release_dates[release_dates$minor_version=="R 4.5",]$patch_updates` updates. 
+At the initial time of writing this, R 4.5 had `r release_dates[release_dates$minor_version=="R 4.5",]$patch_updates` updates.
 
 We'll use a `tsibble` to take a look at updates by initial release date for each major and then minor R version.
-
 
 ```{r major-versions-plot, fig.height=7, fig.width=12}
 plot_majors <- 
@@ -68,15 +68,15 @@ plot_majors
 
 And we save it...
 
-
 ```{r}
 ggsave(
-  here("publish", paste0(Sys.Date(), "_r_major_version_ts.png")),
+  here("images", paste0(Sys.Date(), "_r_major_version_ts.png")),
   width = 15,
   height = 6
   )
 ```
 
+![R major versions](images/r_major_plot.png)
 
 Minor releases graph version
 
@@ -101,16 +101,17 @@ plot_minors
 
 ```{r}
 ggsave(
-  here("publish", paste0(Sys.Date(), "_r_minor_version_ts.png")),
+  here("images", paste0(Sys.Date(), "_r_minor_version_ts.png")),
   width = 15,
   height = 6
   )
 ```
 
-# What months have typically had the most patch updates? 
+![R minor versions](images/r_minor_plot.png)
 
-We can look at the total number of patch_updates that have occurred in each month. 
-We're currently in August 2023, so this might suggest when we can expect patch_updates to occur for the latest R version. 
+# What months have typically had the most patch updates?
+
+We can look at the total number of patch_updates that have occurred in each month. We're currently in August 2023, so this might suggest when we can expect patch_updates to occur for the latest R version.
 
 ```{r patch-update-months}
 release_dates %>% 
@@ -131,18 +132,12 @@ release_dates %>%
 
 ```{r}
 ggsave(
-  here("publish", paste0(Sys.Date(), "_minor_release_months.png")),
+  here("images", paste0(Sys.Date(), "_minor_release_months.png")),
   width = 7,
   height = 5
   )
 ```
 
+![R release months](images/release_months_plot.png)
 
-That's all for now. 
-
-
-
-
-
-
-
+That's all for now.

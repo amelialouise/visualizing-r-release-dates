@@ -20,7 +20,7 @@ library(rversions)
 library(tsibble)
 library(ggrepel)
 
-# custom script to createand save tidy data in local sesh
+# custom script to create and save tidy data in local sesh
 source(here("src", "get_latest_r_versions_data.R"))
 
 # load tidy data
@@ -64,7 +64,7 @@ release_dates %>%
     ## 4 R 3.4                     4
     ## 5 R 3.0                     3
 
-# Can we guess how many more patch_updates the latest R version will have?
+# Can we guess how many more patch updates the latest R version will have?
 
 At the initial time of writing this, R 4.5 had 2 updates.
 
@@ -96,11 +96,16 @@ And we save it…
 
 ``` r
 ggsave(
-  here("publish", paste0(Sys.Date(), "_r_major_version_ts.png")),
+  here("images", paste0(Sys.Date(), "_r_major_version_ts.png")),
   width = 15,
   height = 6
   )
 ```
+
+<figure>
+<img src="images/r_major_plot.png" alt="R major versions" />
+<figcaption aria-hidden="true">R major versions</figcaption>
+</figure>
 
 Minor releases graph version
 
@@ -127,11 +132,16 @@ plot_minors
 
 ``` r
 ggsave(
-  here("publish", paste0(Sys.Date(), "_r_minor_version_ts.png")),
+  here("images", paste0(Sys.Date(), "_r_minor_version_ts.png")),
   width = 15,
   height = 6
   )
 ```
+
+<figure>
+<img src="images/r_minor_plot.png" alt="R minor versions" />
+<figcaption aria-hidden="true">R minor versions</figcaption>
+</figure>
 
 # What months have typically had the most patch updates?
 
@@ -160,10 +170,15 @@ release_dates %>%
 
 ``` r
 ggsave(
-  here("publish", paste0(Sys.Date(), "_minor_release_months.png")),
+  here("images", paste0(Sys.Date(), "_minor_release_months.png")),
   width = 7,
   height = 5
   )
 ```
+
+<figure>
+<img src="images/release_months_plot.png" alt="R release months" />
+<figcaption aria-hidden="true">R release months</figcaption>
+</figure>
 
 That’s all for now.
