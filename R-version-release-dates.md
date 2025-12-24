@@ -90,7 +90,10 @@ plot_majors <-
 plot_majors
 ```
 
-![](R-version-release-dates_files/figure-gfm/major-versions-plot-1.png)<!-- -->
+<figure>
+<img src="images/r_major_plot.png" alt="R major versions" />
+<figcaption aria-hidden="true">R major versions</figcaption>
+</figure>
 
 And we save it…
 
@@ -101,11 +104,6 @@ ggsave(
   height = 6
   )
 ```
-
-<figure>
-<img src="images/r_major_plot.png" alt="R major versions" />
-<figcaption aria-hidden="true">R major versions</figcaption>
-</figure>
 
 Minor releases graph version
 
@@ -128,7 +126,10 @@ plot_minors <-
 plot_minors
 ```
 
-![](R-version-release-dates_files/figure-gfm/minor-versions-plot-1.png)<!-- -->
+<figure>
+<img src="images/r_minor_plot.png" alt="R minor versions" />
+<figcaption aria-hidden="true">R minor versions</figcaption>
+</figure>
 
 ``` r
 ggsave(
@@ -138,10 +139,7 @@ ggsave(
   )
 ```
 
-<figure>
-<img src="images/r_minor_plot.png" alt="R minor versions" />
-<figcaption aria-hidden="true">R minor versions</figcaption>
-</figure>
+
 
 # What months have typically had the most patch updates?
 
@@ -166,7 +164,10 @@ release_dates %>%
   labs(x = NULL, y = "total # of R releases", title = "End of year patch updates are more likely to happen in October")
 ```
 
-![](R-version-release-dates_files/figure-gfm/patch-update-months-1.png)<!-- -->
+<figure>
+<img src="images/release_months_plot.png" alt="R release months" />
+<figcaption aria-hidden="true">R release months</figcaption>
+</figure>
 
 ``` r
 ggsave(
@@ -175,10 +176,5 @@ ggsave(
   height = 5
   )
 ```
-
-<figure>
-<img src="images/release_months_plot.png" alt="R release months" />
-<figcaption aria-hidden="true">R release months</figcaption>
-</figure>
 
 That’s all for now.

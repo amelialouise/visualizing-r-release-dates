@@ -113,7 +113,7 @@ ggsave(
 
 We can look at the total number of patch_updates that have occurred in each month. We're currently in August 2023, so this might suggest when we can expect patch_updates to occur for the latest R version.
 
-```{r patch-update-months}
+```{r patch-update-months, fig.height=5, fig.width=7}
 release_dates %>% 
   mutate(
     month = yearmonth(minor_release_start),
