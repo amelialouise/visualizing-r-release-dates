@@ -9,18 +9,20 @@ Since R 1.4.1, version numbers consist of three numbers: major, minor and patch.
 
 So we'll start with R 1.4.1. 
 
-The `get_latest_r_versions_data.R` script in *src/* will format names and add date variables used for plots. 
+The `get_latest_r_versions_data.R` script in */src* will format names and add date variables used for plots. 
 
-```{r setup, echo = FALSE}
+```{r setup, echo=TRUE, results="hide", message = FALSE}
 library(here)
 library(dplyr)
 library(ggplot2)
 library(rversions)
 library(tsibble)
-#library(fpp3)
 library(ggrepel)
 
+# custom script to createand save tidy data in local sesh
 source(here("src", "get_latest_r_versions_data.R"))
+
+# load tidy data
 release_dates <- readRDS(here("data", paste0(Sys.Date(), "_rversions.RDS")))
 ```
 
@@ -45,7 +47,7 @@ At the initial time of writing this, R 4.5 had `r release_dates[release_dates$mi
 We'll use a `tsibble` to take a look at updates by initial release date for each major and then minor R version.
 
 
-```{r major-versions-plot, fig.height=7, fig.width=12}}
+```{r major-versions-plot, fig.height=7, fig.width=12}
 plot_majors <- 
   release_dates %>% 
   distinct(major_release_start, major_version, minor_releases) %>% 
@@ -78,7 +80,7 @@ ggsave(
 
 Minor releases graph version
 
-```{r fig.height=7, fig.width=12}
+```{r minor-versions-plot, fig.height=7, fig.width=12}
 plot_minors <- 
   release_dates %>% 
   distinct(minor_release_start, minor_version, patch_updates) %>% 
@@ -105,12 +107,12 @@ ggsave(
   )
 ```
 
-# What months have typically had the most patch_updates? 
+# What months have typically had the most patch updates? 
 
 We can look at the total number of patch_updates that have occurred in each month. 
 We're currently in August 2023, so this might suggest when we can expect patch_updates to occur for the latest R version. 
 
-```{r}
+```{r patch-update-months}
 release_dates %>% 
   mutate(
     month = yearmonth(minor_release_start),
